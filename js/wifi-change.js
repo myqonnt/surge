@@ -1,4 +1,6 @@
-const WIFI_DONT_NEED_PROXY = [$argument];
+const args = $argument
+// if args contains `,` convert to array
+const WIFI_DONT_NEED_PROXY = args.includes(',') ? args.split(',') : [args];
 const OLD_WIFI_SSID_KEY = 'current_wifi_ssid';
 const CURRENT_WIFI_SSID = $network.wifi.ssid;
 
@@ -13,7 +15,7 @@ if (wifiChanged()) {
         `use [${mode}] mode`
     );
 }
-
+// 存储
 function wifiChanged() {
     const currentWifiSSid = $persistentStore.read(OLD_WIFI_SSID_KEY);
     const changed = currentWifiSSid !== CURRENT_WIFI_SSID;
