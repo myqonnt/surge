@@ -1,16 +1,26 @@
-const WIFI_DONT_NEED_PROXY = [$argument];
+const WIFI_DONT_NEED_PROXYS = [$argument];
+const CURRENT_WIFI_SSID_KEY = 'current_wifi_ssid';
 
-const targetMode = WIFI_DONT_NEED_PROXY.includes($network.wifi.ssid) ? 'direct' : 'rule';
-const currentMode = $surge.getOutboundMode();
-if (currentMode === targetMode) {
-    $done();
-} else {
-    $surge.setOutboundMode(targetMode);
+if (wifiChanged()) {
+    const mode = WIFI_DONT_NEED_PROXYS.includes($network.wifi.ssid)
+        ? 'direct'
+        : 'rule';
+    $surge.setOutboundMode(mode);
     $notification.post(
         'Surge',
-        `Network changed to ${$network.wifi.ssid || 'cellular'}`,
-        `use ${targetMode} mode`
+        `Network changed to [${$network.wifi.ssid || 'cellular'}]`,
+        `use [${mode}] mode`
     );
 }
+
+function wifiChanged() {
+    const currentWifiSSid = $persistentStore.read(CURRENT_WIFI_SSID_KEY);
+    const changed = currentWifiSSid !== $network.wifi.ssid;
+    changed && $persistentStore.write($network.wifi.ssid, CURRENT_WIFI_SSID_KEY);
+    return changed;
+}
+
 $done();
+
+
 
