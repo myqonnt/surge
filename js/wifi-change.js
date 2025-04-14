@@ -1,10 +1,10 @@
-const args = $argument
-// if args contains `,` convert to array
-const WIFI_DONT_NEED_PROXY = args.includes(',') ? args.split(',') : [args];
 const OLD_WIFI_SSID_KEY = 'current_wifi_ssid';
 const CURRENT_WIFI_SSID = $network.wifi.ssid;
 
 if (wifiChanged()) {
+    const args = $argument
+    // if args contains `,` convert to array
+    const WIFI_DONT_NEED_PROXY = args.includes(',') ? args.split(',') : [args];
     const mode = WIFI_DONT_NEED_PROXY.includes(CURRENT_WIFI_SSID)
         ? 'direct'
         : 'rule';
@@ -17,8 +17,7 @@ if (wifiChanged()) {
 }
 // 存储
 function wifiChanged() {
-    const currentWifiSSid = $persistentStore.read(OLD_WIFI_SSID_KEY);
-    const changed = currentWifiSSid !== CURRENT_WIFI_SSID;
+    const changed = ($persistentStore.read(OLD_WIFI_SSID_KEY) !== CURRENT_WIFI_SSID);
     changed && $persistentStore.write(CURRENT_WIFI_SSID, OLD_WIFI_SSID_KEY);
     return changed;
 }
